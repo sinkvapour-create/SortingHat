@@ -108,7 +108,7 @@ if st.button("Reveal My House"):
 
     # Results
     st.header("You belong in...")
-    st.subheader(f"🏰 {house}!")
+    st.subheader(f" {house}!")
 
     # Show scores
     st.write("### Your House Scores:")
