@@ -81,8 +81,8 @@ def determine_house(counts):
 # -------------------
 # Streamlit app
 # -------------------
-st.set_page_config(page_title="Hogwarts Sorting Hat Quiz", page_icon="🧙‍♂️")
-st.title("🧙‍♂️ The Hogwarts Sorting Hat Quiz")
+st.set_page_config(page_title="Sorting Hat LMAO", page_icon="🧙‍♂️")
+st.title("🧙‍♂️ SORTING HAT")
 st.write("Answer the following questions")
 
 answers = []
