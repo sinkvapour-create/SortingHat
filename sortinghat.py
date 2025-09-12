@@ -83,7 +83,7 @@ def determine_house(counts):
 # -------------------
 st.set_page_config(page_title="Hogwarts Sorting Hat Quiz", page_icon="🧙‍♂️")
 st.title("🧙‍♂️ The Hogwarts Sorting Hat Quiz")
-st.write("Answer the following questions to discover your true house...")
+st.write("Answer the following questions")
 
 answers = []
 
