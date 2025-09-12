@@ -110,21 +110,27 @@ if st.button("Reveal My House"):
     st.header("You belong in...")
     st.subheader(f" {house}!")
 
-    # Show scores
+        # Show scores
     st.write("### Your House Scores:")
     df_scores = pd.DataFrame({
         "House": HOUSES,
         "Score": [counts.get(h, 0) for h in HOUSES]
     })
 
+    # Define Hogwarts house colors
+    house_colors = {
+        "Gryffindor": "#7F0909",   # Dark Red
+        "Slytherin": "#1A472A",    # Green
+        "Ravenclaw": "#0E1A40",    # Blue
+        "Hufflepuff": "#EEE117"    # Yellow/Gold
+    }
+
     chart = alt.Chart(df_scores).mark_bar().encode(
         x=alt.X("House", sort=HOUSES),
         y="Score",
-        color="House"
+        color=alt.Color("House", scale=alt.Scale(domain=list(house_colors.keys()),
+                                                 range=list(house_colors.values())))
     ).properties(width=500, height=300)
 
     st.altair_chart(chart)
-
-    if len(tied) > 1:
-        st.info(f"It was a close call! The Sorting Hat considered: {', '.join(tied)}")
 
