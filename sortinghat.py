@@ -139,20 +139,14 @@ QUESTIONS = [
 ]
 
 
-# -------------------
-# Helper functions
-# -------------------
 def score_answers(selected_options):
-    """Take selected options (list of scoring dicts) and sum up house points."""
     scores = Counter()
     for option in selected_options:
         for house, pts in option.items():
             scores[house] += pts
     return scores
 
-
 def determine_house(counts):
-    """Return final house and tie list if any."""
     if not counts:
         return None, []
     max_points = max(counts.values())
@@ -161,60 +155,65 @@ def determine_house(counts):
         return top[0], top
     return random.choice(top), top
 
-
 # -------------------
 # Streamlit app
 # -------------------
 st.set_page_config(page_title="Sorting Hat LMAO", page_icon="🧙‍♂️")
 st.title("🧙‍♂️ SORTING HAT")
-st.write("Answer the following questions")
 
-answers = []
+# Ask for user name first
+name = st.text_input("What is your name?")
 
-# Render questions
-for i, q in enumerate(QUESTIONS, 1):
-    st.subheader(f"Q{i}. {q['q']}")
-    choice = st.radio(
-        "Choose one:",
-        [opt[0] for opt in q["opts"]],
-        key=f"q{i}"
-    )
-    # Find the scoring dict for the selected choice
-    for text, score_dict in q["opts"]:
-        if text == choice:
-            answers.append(score_dict)
-    st.write("---")
+if name:
+    st.write(f"Hello {name}! Answer the following questions to find out your Hogwarts house.")
 
-# Submit button
-if st.button("Reveal My House"):
-    counts = score_answers(answers)
-    house, tied = determine_house(counts)
+    answers = []
 
-    # Results
-    st.header("You belong in...")
-    st.subheader(f" {house}!")
+    # Render questions
+    for i, q in enumerate(QUESTIONS, 1):
+        st.subheader(f"Q{i}. {q['q']}")
+        choice = st.radio(
+            "Choose one:",
+            [opt[0] for opt in q["opts"]],
+            key=f"q{i}"
+        )
+        for text, score_dict in q["opts"]:
+            if text == choice:
+                answers.append(score_dict)
+        st.write("---")
 
-        # Show scores
-    st.write("### Your House Scores:")
-    df_scores = pd.DataFrame({
-        "House": HOUSES,
-        "Score": [counts.get(h, 0) for h in HOUSES]
-    })
+    # Submit button
+    if st.button("Reveal My House"):
+        counts = score_answers(answers)
+        house, tied = determine_house(counts)
 
-    # Define Hogwarts house colors
-    house_colors = {
-        "Gryffindor": "#7F0909",   # Dark Red
-        "Slytherin": "#1A472A",    # Green
-        "Ravenclaw": "#0E1A40",    # Blue
-        "Hufflepuff": "#EEE117"    # Yellow/Gold
-    }
+        # Display result with custom message
+        st.header(f"🎉 {name}, you have been assigned to...")
+        st.subheader(f"🏰 {house}!")
 
-    chart = alt.Chart(df_scores).mark_bar().encode(
-        x=alt.X("House", sort=HOUSES),
-        y="Score",
-        color=alt.Color("House", scale=alt.Scale(domain=list(house_colors.keys()),
-                                                 range=list(house_colors.values())))
-    ).properties(width=500, height=300)
+        # Show house scores as bar chart
+        st.write("### Your House Scores:")
+        df_scores = pd.DataFrame({
+            "House": HOUSES,
+            "Score": [counts.get(h, 0) for h in HOUSES]
+        })
 
-    st.altair_chart(chart)
+        house_colors = {
+            "Gryffindor": "#7F0909",
+            "Slytherin": "#1A472A",
+            "Ravenclaw": "#0E1A40",
+            "Hufflepuff": "#EEE117"
+        }
 
+        chart = alt.Chart(df_scores).mark_bar().encode(
+            x=alt.X("House", sort=HOUSES),
+            y="Score",
+            color=alt.Color("House", scale=alt.Scale(domain=list(house_colors.keys()),
+                                                     range=list(house_colors.values())))
+        ).properties(width=500, height=300)
+
+        st.altair_chart(chart)
+
+        # Optional: Add a house-themed image
+        st.image(f"https://raw.githubusercontent.com/your-username/hogwarts-images/main/{house.lower()}.png",
+                 caption=f"{house} Crest", width=250)
