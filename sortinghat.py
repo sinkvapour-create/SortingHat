@@ -4,6 +4,7 @@ import altair as alt
 from collections import Counter
 import random
 from datetime import datetime
+import os
 
 # -------------------
 # House definitions
@@ -139,6 +140,7 @@ QUESTIONS = [
     },
 ]
 
+
 # -------------------
 # Helper functions
 # -------------------
@@ -164,10 +166,26 @@ def determine_house(counts):
 st.set_page_config(page_title="Sorting Hat LMAO", page_icon="🧙‍♂️")
 st.title("🧙‍♂️ SORTING HAT")
 
+# --- Load the existing results
+try:
+    results_df = pd.read_csv("results.csv")
+except FileNotFoundError:
+    results_df = pd.DataFrame(columns=["name", "house", "timestamp"])
+
 # Ask for user name first
-name = st.text_input("What is your name?")
+name = st.text_input("What is your name?").strip()
 
 if name:
+    # --- Check if the user has already played using their name
+    if name in results_df['name'].values:
+        st.warning(f"Hello {name}, you have already been sorted!")
+        
+        # Find and display their past result
+        past_result = results_df[results_df['name'] == name].iloc[0]
+        st.info(f"Your assigned house is: **{past_result['house']}**")
+        st.stop() # Stop the script from running further
+    
+    # --- If the user is new, show the quiz
     st.write(f"Hello {name}! Answer the following questions to find out your Hogwarts house.")
     
     answers = []
@@ -175,7 +193,6 @@ if name:
     # Render questions
     for i, q in enumerate(QUESTIONS, 1):
         st.subheader(f"Q{i}. {q['q']}")
-        # --- MODIFIED: Added `index=None` to prevent default selection
         choice = st.radio(
             "Choose one:",
             [opt[0] for opt in q["opts"]],
@@ -183,7 +200,6 @@ if name:
             index=None
         )
         
-        # --- MODIFIED: Only append to answers if a choice was made
         if choice:
             for text, score_dict in q["opts"]:
                 if text == choice:
@@ -192,7 +208,6 @@ if name:
 
     # Submit button
     if st.button("Reveal My House"):
-        # Check if all questions were answered
         if len(answers) != len(QUESTIONS):
             st.warning("Please answer all questions before revealing your house!")
         else:
@@ -226,8 +241,6 @@ if name:
             st.altair_chart(chart)
 
             # Optional house image
-            # Note: You will need to replace the URL with your own image host
-            # For demonstration, a placeholder URL is used.
             st.image(f"https://raw.githubusercontent.com/your-username/hogwarts-images/main/{house.lower()}.png",
                       caption=f"{house} Crest", width=250)
 
@@ -237,22 +250,28 @@ if name:
             result = {"name": name, "house": house, "timestamp": datetime.now()}
             df_result = pd.DataFrame([result])
 
-            try:
-                old_df = pd.read_csv("results.csv")
-                df_result = pd.concat([old_df, df_result], ignore_index=True)
-            except FileNotFoundError:
-                pass
-
+            df_result = pd.concat([results_df, df_result], ignore_index=True)
             df_result.to_csv("results.csv", index=False)
 
 # -------------------
 # Admin-only past results
 # -------------------
-if st.checkbox("Show past results"):
-    password = st.text_input("If you are worthy of comprehending such knowledge, you will know the password...", type="password")
+st.write("---")
+if st.checkbox("Show past results (Admin Only)"):
+    password = st.text_input("Enter password", type="password")
     if password == "YOUR_SECRET_PASSWORD":
         try:
             df_admin = pd.read_csv("results.csv")
             st.dataframe(df_admin)
+            st.write("---")
         except FileNotFoundError:
             st.warning("No past results found yet.")
+        
+        # --- Add a Reset button here
+        if st.button("Reset All Results"):
+            if os.path.exists("results.csv"):
+                os.remove("results.csv")
+                st.success("Results file has been reset.")
+                st.rerun() # Rerun the app to show the change
+            else:
+                st.info("No results file to reset.")
