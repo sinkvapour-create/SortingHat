@@ -179,8 +179,8 @@ if name:
     # Check if the user has already played using their name
     if name in results_df['name'].values:
         st.warning("Have you completed the test already?")
-        st.image("doakes.webp", caption="The Sorting Hat judges you.")
-        st.stop() 
+        st.image("doakes.webp", caption="Interesting")
+        #st.stop() 
     
     # --- The rest of the quiz code is not indented to stay in the main flow
     st.write(f"Hello {name}! Answer the following questions to find out your Hogwarts house.")
