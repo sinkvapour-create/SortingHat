@@ -139,6 +139,9 @@ QUESTIONS = [
 ]
 
 
+# -------------------
+# Helper functions
+# -------------------
 def score_answers(selected_options):
     scores = Counter()
     for option in selected_options:
@@ -166,7 +169,7 @@ name = st.text_input("What is your name?")
 
 if name:
     st.write(f"Hello {name}! Answer the following questions to find out your Hogwarts house.")
-
+    
     answers = []
 
     # Render questions
@@ -187,11 +190,11 @@ if name:
         counts = score_answers(answers)
         house, tied = determine_house(counts)
 
-        # Display result with custom message
+        # Display result
         st.header(f"🎉 {name}, you have been assigned to...")
         st.subheader(f"🏰 {house}!")
 
-        # Show house scores as bar chart
+        # House scores chart
         st.write("### Your House Scores:")
         df_scores = pd.DataFrame({
             "House": HOUSES,
@@ -214,28 +217,30 @@ if name:
 
         st.altair_chart(chart)
 
-        # Optional: Add a house-themed image
+        # Optional: Add house-themed image
         st.image(f"https://raw.githubusercontent.com/your-username/hogwarts-images/main/{house.lower()}.png",
                  caption=f"{house} Crest", width=250)
 
-import pandas as pd
-from datetime import datetime
+        # -------------------
+        # Store result
+        # -------------------
+        result = {"name": name, "house": house, "timestamp": datetime.now()}
+        try:
+            old_df = pd.read_csv("results.csv")
+            df_all = pd.concat([old_df, pd.DataFrame([result])], ignore_index=True)
+        except FileNotFoundError:
+            df_all = pd.DataFrame([result])
+        
+        df_all.to_csv("results.csv", index=False)
 
-# Example: Append result to CSV
-result = {"name": name, "house": house, "timestamp": datetime.now()}
-df = pd.DataFrame([result])
-
-# Append to existing file
-try:
-    old_df = pd.read_csv("results.csv")
-    df = pd.concat([old_df, df], ignore_index=True)
-except FileNotFoundError:
-    pass
-
-df.to_csv("results.csv", index=False)
-
-# Viewing past results (only you)
+# -------------------
+# Admin-only past results
+# -------------------
 if st.checkbox("Show past results (Admin Only)"):
     password = st.text_input("Enter password", type="password")
     if password == "YOUR_SECRET_PASSWORD":
-        st.dataframe(df)
+        try:
+            df_admin = pd.read_csv("results.csv")
+            st.dataframe(df_admin)
+        except FileNotFoundError:
+            st.warning("No past results found yet.")
