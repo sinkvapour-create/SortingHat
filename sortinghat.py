@@ -179,7 +179,7 @@ if name:
     # Check if the user has already played using their name
     if name in results_df['name'].values:
         st.warning("Have you completed the test already?")
-        st.image("sorting_hat_snarky.png", caption="The Sorting Hat judges you.")
+        st.image("doakes.webp", caption="The Sorting Hat judges you.")
         st.stop() 
     
     # --- The rest of the quiz code is not indented to stay in the main flow
