@@ -196,8 +196,8 @@ if name:
             counts = score_answers(answers)
             house, tied = determine_house(counts)
 
-            st.header(f"🎉 {name}, you have been assigned to...")
-            st.subheader(f"🏰 {house}!")
+            st.header(f" {name}, you have been assigned to...")
+            st.subheader(f" {house}!")
 
             df_scores = pd.DataFrame({
                 "House": HOUSES,
