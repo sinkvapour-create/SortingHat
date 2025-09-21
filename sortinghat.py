@@ -217,3 +217,25 @@ if name:
         # Optional: Add a house-themed image
         st.image(f"https://raw.githubusercontent.com/your-username/hogwarts-images/main/{house.lower()}.png",
                  caption=f"{house} Crest", width=250)
+
+import pandas as pd
+from datetime import datetime
+
+# Example: Append result to CSV
+result = {"name": name, "house": house, "timestamp": datetime.now()}
+df = pd.DataFrame([result])
+
+# Append to existing file
+try:
+    old_df = pd.read_csv("results.csv")
+    df = pd.concat([old_df, df], ignore_index=True)
+except FileNotFoundError:
+    pass
+
+df.to_csv("results.csv", index=False)
+
+# Viewing past results (only you)
+if st.checkbox("Show past results (Admin Only)"):
+    password = st.text_input("Enter password", type="password")
+    if password == "YOUR_SECRET_PASSWORD":
+        st.dataframe(df)
