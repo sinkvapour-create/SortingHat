@@ -186,54 +186,53 @@ if name:
         st.write("---")
 
     # Submit button
-if st.button("Reveal My House"):
-    counts = score_answers(answers)
-    house, tied = determine_house(counts)
+    if st.button("Reveal My House"):
+        counts = score_answers(answers)
+        house, tied = determine_house(counts)
 
-    # Display result
-    st.header(f"🎉 {name}, you have been assigned to...")
-    st.subheader(f"🏰 {house}!")
+        # Display result
+        st.header(f"🎉 {name}, you have been assigned to...")
+        st.subheader(f"🏰 {house}!")
 
-    # Show scores
-    df_scores = pd.DataFrame({
-        "House": HOUSES,
-        "Score": [counts.get(h, 0) for h in HOUSES]
-    })
+        # Show scores
+        df_scores = pd.DataFrame({
+            "House": HOUSES,
+            "Score": [counts.get(h, 0) for h in HOUSES]
+        })
 
-    house_colors = {
-        "Gryffindor": "#7F0909",
-        "Slytherin": "#1A472A",
-        "Ravenclaw": "#0E1A40",
-        "Hufflepuff": "#EEE117"
-    }
+        house_colors = {
+            "Gryffindor": "#7F0909",
+            "Slytherin": "#1A472A",
+            "Ravenclaw": "#0E1A40",
+            "Hufflepuff": "#EEE117"
+        }
 
-    chart = alt.Chart(df_scores).mark_bar().encode(
-        x=alt.X("House", sort=HOUSES),
-        y="Score",
-        color=alt.Color("House", scale=alt.Scale(domain=list(house_colors.keys()),
-                                                 range=list(house_colors.values())))
-    ).properties(width=500, height=300)
+        chart = alt.Chart(df_scores).mark_bar().encode(
+            x=alt.X("House", sort=HOUSES),
+            y="Score",
+            color=alt.Color("House", scale=alt.Scale(domain=list(house_colors.keys()),
+                                                     range=list(house_colors.values())))
+        ).properties(width=500, height=300)
 
-    st.altair_chart(chart)
+        st.altair_chart(chart)
 
-    # Optional house image
-    st.image(f"https://raw.githubusercontent.com/your-username/hogwarts-images/main/{house.lower()}.png",
-             caption=f"{house} Crest", width=250)
+        # Optional house image
+        st.image(f"https://raw.githubusercontent.com/your-username/hogwarts-images/main/{house.lower()}.png",
+                 caption=f"{house} Crest", width=250)
 
-    # -------------------
-    # Save results to CSV
-    # -------------------
-    result = {"name": name, "house": house, "timestamp": datetime.now()}
-    df_result = pd.DataFrame([result])
+        # -------------------
+        # Save results to CSV
+        # -------------------
+        result = {"name": name, "house": house, "timestamp": datetime.now()}
+        df_result = pd.DataFrame([result])
 
-    try:
-        old_df = pd.read_csv("results.csv")
-        df_result = pd.concat([old_df, df_result], ignore_index=True)
-    except FileNotFoundError:
-        pass
+        try:
+            old_df = pd.read_csv("results.csv")
+            df_result = pd.concat([old_df, df_result], ignore_index=True)
+        except FileNotFoundError:
+            pass
 
-    df_result.to_csv("results.csv", index=False)
-
+        df_result.to_csv("results.csv", index=False)
 
 # -------------------
 # Admin-only past results
