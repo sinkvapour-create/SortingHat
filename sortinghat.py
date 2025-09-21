@@ -6,15 +6,10 @@ import random
 from datetime import datetime
 import os
 
-# -------------------
-# House definitions
-# -------------------
+
 HOUSES = ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]
 
-# -------------------
-# Questions with dynamic scoring
-# Each option maps to a dict: {house: points, ...}
-# -------------------
+
 QUESTIONS = [
     {
         "q": "You were in the library and accidentally skipped lunch. What do you do?",
@@ -141,9 +136,7 @@ QUESTIONS = [
 ]
 
 
-# -------------------
-# Helper functions
-# -------------------
+
 def score_answers(selected_options):
     scores = Counter()
     for option in selected_options:
@@ -160,34 +153,27 @@ def determine_house(counts):
         return top[0], top
     return random.choice(top), top
 
-# -------------------
-# Streamlit app
-# -------------------
+
 st.set_page_config(page_title="Sorting Hat LMAO", page_icon="🧙‍♂️")
 st.title("🧙‍♂️ SORTING HAT")
 
-# --- Load the existing results
 try:
     results_df = pd.read_csv("results.csv")
 except FileNotFoundError:
     results_df = pd.DataFrame(columns=["name", "house", "timestamp"])
 
-# Ask for user name first
 name = st.text_input("What is your name?").strip()
 
 if name:
-    # Check if the user has already played using their name
     if name in results_df['name'].values:
         st.warning("Have you completed this test in the past?")
         st.image("doakes.webp", caption="Interesting")
         #st.stop() 
     
-    # --- The rest of the quiz code is not indented to stay in the main flow
     st.write(f"Hello {name}! Answer the following questions to find out your Hogwarts house.")
     
     answers = []
 
-    # Render questions
     for i, q in enumerate(QUESTIONS, 1):
         st.subheader(f"Q{i}. {q['q']}")
         choice = st.radio(
@@ -203,7 +189,6 @@ if name:
                     answers.append(score_dict)
         st.write("---")
 
-    # Submit button
     if st.button("Reveal My House"):
         if len(answers) != len(QUESTIONS):
             st.warning("Please answer all questions before revealing your house!")
@@ -211,11 +196,9 @@ if name:
             counts = score_answers(answers)
             house, tied = determine_house(counts)
 
-            # Display result
             st.header(f"🎉 {name}, you have been assigned to...")
             st.subheader(f"🏰 {house}!")
 
-            # Show scores
             df_scores = pd.DataFrame({
                 "House": HOUSES,
                 "Score": [counts.get(h, 0) for h in HOUSES]
@@ -237,22 +220,17 @@ if name:
 
             st.altair_chart(chart)
 
-            # Optional house image
             st.image(f"https://raw.githubusercontent.com/your-username/hogwarts-images/main/{house.lower()}.png",
                       caption=f"{house} Crest", width=250)
 
-            # -------------------
-            # Save results to CSV
-            # -------------------
+
             result = {"name": name, "house": house, "timestamp": datetime.now()}
             df_result = pd.DataFrame([result])
 
             df_result = pd.concat([results_df, df_result], ignore_index=True)
             df_result.to_csv("results.csv", index=False)
 
-# -------------------
-# Admin-only past results
-# -------------------
+
 st.write("---")
 if st.checkbox("Show past results"):
     password = st.text_input("Do you really think to you can comprehend this knowledge? Then enter the magic word...", type="password")
