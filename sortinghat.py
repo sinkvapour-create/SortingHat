@@ -238,8 +238,8 @@ if name:
 # -------------------
 # Admin-only past results
 # -------------------
-if st.checkbox("Show past results (Admin Only)"):
-    password = st.text_input("Enter password", type="password")
+if st.checkbox("Show past results"):
+    password = st.text_input("If you are worthy of comprehending such knowledge, you will know the password...", type="password")
     if password == "YOUR_SECRET_PASSWORD":
         try:
             df_admin = pd.read_csv("results.csv")
