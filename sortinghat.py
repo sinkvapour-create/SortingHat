@@ -186,7 +186,7 @@ if name:
         st.write("---")
 
     # Submit button
-    if st.button("Reveal My House"):
+if st.button("Reveal My House"):
     counts = score_answers(answers)
     house, tied = determine_house(counts)
 
