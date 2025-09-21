@@ -178,7 +178,7 @@ name = st.text_input("What is your name?").strip()
 if name:
     # Check if the user has already played using their name
     if name in results_df['name'].values:
-        st.warning("Have you completed the test already?")
+        st.warning("Have you completed this test in the past?")
         st.image("doakes.webp", caption="Interesting")
         #st.stop() 
     
