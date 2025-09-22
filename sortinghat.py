@@ -198,7 +198,7 @@ if name:
             st.warning("It's almost like you already knew the questions...")
             # I can't access a local file, so I'll provide a placeholder.
             # You can replace this with your actual image file.
-            st.image("https://example.com/sansnoeyes.png", caption="You didn't really have to retake it, you know.")
+            st.image("sansnoeyes.png", caption="You can't understand how this feels. Knowing that one day, without warning, it's all going to be reset.")
         # If all questions are answered and the name is new or the user chose to re-do it, proceed as normal
         else:
             counts = score_answers(answers)
