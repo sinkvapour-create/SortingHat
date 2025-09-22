@@ -236,8 +236,15 @@ if name:
 
 st.write("---")
 if st.checkbox("Show past results"):
-    password = st.text_input("Do you really think to you can comprehend this knowledge? Then enter the magic word...", type="password")
-    if password == "GARAWA":
+    password_input = st.text_input(
+        "Do you really think you can comprehend this knowledge? Then enter the magic word...",
+        type="password"
+    )
+
+    # Get the real password from secrets
+    correct_password = st.secrets["passwords"]["admin"]
+
+    if password_input == correct_password:
         try:
             df_admin = pd.read_csv("results.csv")
             st.dataframe(df_admin)
@@ -252,3 +259,4 @@ if st.checkbox("Show past results"):
                 st.rerun()
             except FileNotFoundError:
                 st.info("No results file to reset.")
+
