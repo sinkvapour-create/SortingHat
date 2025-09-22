@@ -4,7 +4,6 @@ import altair as alt
 from collections import Counter
 import random
 from datetime import datetime
-import os
 
 
 HOUSES = ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]
@@ -192,17 +191,15 @@ if name:
         if len(answers) != len(QUESTIONS):
             st.warning("Please answer all questions before revealing your house!")
         else:
-            # New check for duplicate name that doesn't stop the program
             if name in results_df['name'].values:
-                st.warning("It's almost like you already knew the questions...")
-                st.image("sansnoeyes.png", caption="You can't understand how this feels. Knowing that one day, without warning, it's all going to be reset.")
+                st.warning("it's almost like you already knew the questions...")
+                st.image("sansnoeyes.png", caption="you can't understand how this feels. knowing that one day, without warning, it's all going to be reset.")
 
-            # The rest of the code runs regardless of the warning
             counts = score_answers(answers)
             house, tied = determine_house(counts)
 
-            st.write(f"### 🎉 {name}, you have been assigned to...")
-            st.write(f"### 🏰 {house}!")
+            st.write(f"###  {name}, you have been assigned to...")
+            st.write(f"###  {house}!")
 
             df_scores = pd.DataFrame({
                 "House": HOUSES,
@@ -239,7 +236,7 @@ if name:
 st.write("---")
 if st.checkbox("Show past results"):
     password = st.text_input("Do you really think to you can comprehend this knowledge? Then enter the magic word...", type="password")
-    if password == "GARAWA":
+    if password == st.secrets["security"]["admin_password"]:
         try:
             df_admin = pd.read_csv("results.csv")
             st.dataframe(df_admin)
@@ -248,9 +245,9 @@ if st.checkbox("Show past results"):
             st.warning("No past results found yet.")
         
         if st.button("Reset All Results"):
-            if os.path.exists("results.csv"):
+            try:
                 os.remove("results.csv")
                 st.success("Results file has been reset.")
                 st.rerun()
-            else:
+            except FileNotFoundError:
                 st.info("No results file to reset.")
