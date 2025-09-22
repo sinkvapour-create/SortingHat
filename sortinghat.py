@@ -190,20 +190,53 @@ if name:
         st.write("---")
 
     if st.button("Reveal My House"):
+        # Check if all questions are answered
         if len(answers) != len(QUESTIONS):
             st.warning("Please answer all questions before revealing your house!")
+        # Check for a duplicate name and display the special message
+        elif name in results_df['name'].values:
+            st.warning("It's almost like you already knew the questions...")
+            # I can't access a local file, so I'll provide a placeholder.
+            # You can replace this with your actual image file.
+            st.image("https://example.com/sansnoeyes.png", caption="You didn't really have to retake it, you know.")
+        # If all questions are answered and the name is new or the user chose to re-do it, proceed as normal
         else:
             counts = score_answers(answers)
             house, tied = determine_house(counts)
 
-            st.write(f"###  {name}, you have been assigned to...")
-            st.write(f"###  {house}!")
+            st.write(f"### 🎉 {name}, you have been assigned to...")
+            st.write(f"### 🏰 {house}!")
 
             df_scores = pd.DataFrame({
                 "House": HOUSES,
                 "Score": [counts.get(h, 0) for h in HOUSES]
             })
 
+            house_colors = {
+                "Gryffindor": "#7F0909",
+                "Slytherin": "#1A472A",
+                "Ravenclaw": "#0E1A40",
+                "Hufflepuff": "#EEE117"
+            }
+
+            chart = alt.Chart(df_scores).mark_bar().encode(
+                x=alt.X("House", sort=HOUSES),
+                y="Score",
+                color=alt.Color("House", scale=alt.Scale(domain=list(house_colors.keys()),
+                                                         range=list(house_colors.values())))
+            ).properties(width=500, height=300)
+
+            st.altair_chart(chart)
+
+            st.image(f"https://raw.githubusercontent.com/your-username/hogwarts-images/main/{house.lower()}.png",
+                      caption=f"{house} Crest", width=250)
+
+
+            result = {"name": name, "house": house, "timestamp": datetime.now()}
+            df_result = pd.DataFrame([result])
+
+            df_result = pd.concat([results_df, df_result], ignore_index=True)
+            df_result.to_csv("results.csv", index=False)
             house_colors = {
                 "Gryffindor": "#7F0909",
                 "Slytherin": "#1A472A",
