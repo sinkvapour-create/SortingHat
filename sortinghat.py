@@ -194,7 +194,7 @@ if name:
         else:
             if name in results_df['name'].values:
                 st.warning("it's almost like you already knew the questions...")
-                st.image("sansnoeyes.png", caption="you can't understand how this feels. knowing that one day, without warning, it's all going to be reset.")
+                st.image("sansnoeyes.png", caption="you can't in;iuodhoqiwd  how this feels. knowing that one day, without warning, it's all going to be reset.")
 
             counts = score_answers(answers)
             house, tied = determine_house(counts)
