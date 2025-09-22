@@ -4,6 +4,7 @@ import altair as alt
 from collections import Counter
 import random
 from datetime import datetime
+import os
 
 
 HOUSES = ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]
@@ -198,8 +199,8 @@ if name:
             counts = score_answers(answers)
             house, tied = determine_house(counts)
 
-            st.write(f"###  {name}, you have been assigned to...")
-            st.write(f"###  {house}!")
+            st.write(f"### 🎉 {name}, you have been assigned to...")
+            st.write(f"### 🏰 {house}!")
 
             df_scores = pd.DataFrame({
                 "House": HOUSES,
