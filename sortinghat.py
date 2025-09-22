@@ -236,7 +236,7 @@ if name:
 st.write("---")
 if st.checkbox("Show past results"):
     password = st.text_input("Do you really think to you can comprehend this knowledge? Then enter the magic word...", type="password")
-    if password == st.secrets["security"]["admin_password"]:
+    if password == "GARAWA":
         try:
             df_admin = pd.read_csv("results.csv")
             st.dataframe(df_admin)
