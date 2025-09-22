@@ -194,13 +194,13 @@ if name:
         if len(answers) != len(QUESTIONS):
             st.warning("Please answer all questions before revealing your house!")
         # Check for a duplicate name and display the special message
-        elif name in results_df['name'].values:
-            st.warning("It's almost like you already knew the questions...")
-            # I can't access a local file, so I'll provide a placeholder.
-            # You can replace this with your actual image file.
-            st.image("sansnoeyes.png", caption="You can't understand how this feels. Knowing that one day, without warning, it's all going to be reset.")
-        # If all questions are answered and the name is new or the user chose to re-do it, proceed as normal
         else:
+            if name in results_df['name'].values:
+                st.warning("It's almost like you already knew the questions...")
+                # I can't access a local file, so I'll provide a placeholder.
+                # You can replace this with your actual image file.
+                st.image("sansnoeyes.png", caption="You can't understand how this feels. Knowing that one day, without warning, it's all going to be reset.")
+        # If all questions are answered and the name is new or the user chose to re-do it, proceed as normal
             counts = score_answers(answers)
             house, tied = determine_house(counts)
 
@@ -262,6 +262,8 @@ if name:
 
             df_result = pd.concat([results_df, df_result], ignore_index=True)
             df_result.to_csv("results.csv", index=False)
+        
+        
 
 
 st.write("---")
